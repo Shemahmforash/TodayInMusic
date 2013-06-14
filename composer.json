@@ -1,0 +1,23 @@
+{
+    "name": "shemahmforash/twitter-thisdayinmusic",
+    "type": "project",
+    "description": "Twitter bot that tweets about this day in music history.",
+    "keywords": ["twitter", "music", "thisdayin"],
+    "license": ["GPL-3.0+"],
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Carlos Rosão",
+            "homepage": "http://icdif.com"
+        }
+    ],
+    "require": {
+        "shemahmforash/thisdayin": "dev-master",
+        "dg/twitter-php": "dev-master",
+        "doctrine/orm": "2.*",
+        "symfony/yaml": "2.*"
+    },
+    "autoload": {
+        "psr-0": {"": "src/"}
+    }
+}
