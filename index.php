@@ -1,31 +1,89 @@
 <?php
-    /**
-        Ideia:
-        1. Se a DB n tiver dados para o dia de hoje, correr o Dayin\Music para ir buscar os dados do dia de hoje e guardá-los na DB.
-        2. Ir buscar uma entrada aleatória da DB correspondente ao dia de hoje e fazer tweet dela. (de forma a q possa correr o script hora a hora e, de cada vez, envia um tweet).
-    */
+    require_once "bootstrap.php";
 
-    use Doctrine\ORM\Tools\Setup;
-    use Doctrine\ORM\EntityManager;
+    $now = new DateTime("now");
+    $eventRepository = $entityManager->getRepository('Event');
 
-    require_once "vendor/autoload.php";
+    /*find events in the same day/month as today*/
+    //TODO: change this query builder to criteria matching
+    $qb = $entityManager->createQueryBuilder();
+    $qb->select('e')
+        ->from('Event', 'e')
+        ->where('e.date like :date')
+        ->setParameters(array(
+                'date' => '%' . $now->format('m-d')
+            ));
+    $events = $qb->getQuery()->getArrayResult();
 
-    // Create a simple "default" Doctrine ORM configuration for Annotations
-    $isDevMode = true;
-    $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__."/src"), $isDevMode);
-    // or if you prefer yaml or XML
-    //$config = Setup::createXMLMetadataConfiguration(array(__DIR__."/config/xml"), $isDevMode);
-    //$config = Setup::createYAMLMetadataConfiguration(array(__DIR__."/config/yaml"), $isDevMode);
+    //no events for today, get them
+    if( !count( $events) ) {
+        $dim = new ThisDayIn\Music( "\HTML_Parser_HTML5" );
+        $evs = $dim->getEvents();
 
-    // database configuration parameters
-    $conn = array(
-            'dbname' => 'DayInMusic',
-            'user' => 'wanderer',
-            'password' => '11111',
-            'host' => 'localhost',
-            'driver' => 'pdo_mysql',
-        );
+        foreach($evs as $ev ) {
+            $year   = $ev['year'];
+            $month  = $now->format('m');
+            $day    = $now->format('d');
+            $format = sprintf('%s-%s-%s', $year, $month, $day);
+            $date   = new DateTime( $format );
 
-    // obtaining the entity manager
-    $entityManager = EntityManager::create($conn, $config);
+            //set current event
+            $event = new Event(); 
+            $event->setDate( $date );
+            $event->setDescription( $ev['description'] ); 
+            $entityManager->persist( $event );
+        }
+
+        //insert all events to db
+        if( count( $evs ) )
+            $entityManager->flush();
+    }
+
+    /*find today's unpublished events */
+    /*TODO: convert this to criteria search*/
+    $qb = $entityManager->createQueryBuilder();
+    $qb->select('e')
+        ->from('Event', 'e')
+        ->where('e.date like :date')
+        ->andWhere('e.is_published = 0')
+        ->setParameters(array(
+                'date' => '%' . $now->format('m-d')
+            ));
+    $events = $qb->getQuery()->getArrayResult();
+
+    $eventNumber = count( $events );
+
+    if( $eventNumber ) {
+        //choose a random unpublished event
+        $random = rand(0, $eventNumber - 1);
+        $event = $events[$random];
+
+        //and tweet it
+        $twitter = new Twitter(
+                $twitter['consumerKey'],
+                $twitter['consumerSecret'],
+                $twitter['accessToken'],
+                $twitter['accessTokenSecret']
+            );
+
+        $date = $event['date'];
+
+        $message = sprintf('%s - %s', $date->format('Y'), $event['description'] );
+        if( strlen( $message ) + strlen( ' #thisdayinmusic' ) < 140 )
+            $message .= ' #thisdayinmusic';
+
+        //update the event's published status
+        //TODO: if using criteria, here I would have had the object. Now as I must get it...
+        $event = $eventRepository->findOneBy(array('description' => $event['description'], 'date' => $date ));
+        $event->setIsPublished( 1 );
+
+        try {
+            $tweet = $twitter->send( $message );
+
+        } catch (TwitterException $e) {
+            echo 'Error: ' . $e->getMessage();
+        }
+    }
+
+
 ?>

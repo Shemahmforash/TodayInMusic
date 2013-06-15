@@ -13,29 +13,29 @@ class Event {
     /**
      * @var int
      */
-    /** @Column(type="integer") **/
+    /** @Column(type="date") **/
     protected $date;
 
     /**
      * @var string
      */
-    /** @Column(type="string") **/
+    /** @Column(type="string", nullable=true) **/
     protected $description;
 
     /**
      * @var string
      */
-    /** @Column(type="string") **/
+    /** @Column(type="string", nullable=true) **/
     protected $type;
 
     /**
      * @var string
      */
-    /** @Column(type="string") **/
+    /** @Column(type="string", nullable=true) **/
     protected $source;
 
     /** @Column(type="boolean") **/
-    protected $is_published;
+    protected $is_published = 0;
 
     public function getId() {
         return $this->id;
@@ -77,7 +77,7 @@ class Event {
         return $this->is_published;
     }
 
-    public function setIsPublished(Boolean $is_published) {
+    public function setIsPublished($is_published) {
         $this->is_published = $is_published;
     }
 }
