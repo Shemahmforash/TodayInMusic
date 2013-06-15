@@ -53,12 +53,11 @@
 
     $eventNumber = count( $events );
 
+    //choose a random unpublished event and tweet it
     if( $eventNumber ) {
-        //choose a random unpublished event
         $random = rand(0, $eventNumber - 1);
         $event = $events[$random];
 
-        //and tweet it
         $twitter = new Twitter(
                 $twitter['consumerKey'],
                 $twitter['consumerSecret'],
@@ -76,12 +75,13 @@
         //TODO: if using criteria, here I would have had the object. Now as I must get it...
         $event = $eventRepository->findOneBy(array('description' => $event['description'], 'date' => $date ));
         $event->setIsPublished( 1 );
+        $entityManager->flush();
 
         try {
             $tweet = $twitter->send( $message );
 
         } catch (TwitterException $e) {
-            echo 'Error: ' . $e->getMessage();
+            //echo 'Error: ' . $e->getMessage();
         }
     }
 
