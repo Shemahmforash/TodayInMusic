@@ -21,11 +21,6 @@
         $evs = $dim->getEvents();
         
         foreach($evs as $ev ) {
-            /*$year   = $ev['year'];
-            $month  = $now->format('m');
-            $day    = $now->format('d');
-            $format = sprintf('%s-%s-%s', $year, $month, $day);*/
-
             $date   = new DateTime( $ev['date'] );
 
             if( $ev['type'] !== 'Event') {
