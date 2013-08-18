@@ -19,13 +19,23 @@
     if( !count( $events) ) {
         $dim = new ThisDayIn\Music( "\HTML_Parser_HTML5" );
         $evs = $dim->getEvents();
-
+        
         foreach($evs as $ev ) {
-            $year   = $ev['year'];
+            /*$year   = $ev['year'];
             $month  = $now->format('m');
             $day    = $now->format('d');
-            $format = sprintf('%s-%s-%s', $year, $month, $day);
-            $date   = new DateTime( $format );
+            $format = sprintf('%s-%s-%s', $year, $month, $day);*/
+
+            $date   = new DateTime( $ev['date'] );
+
+            if( $ev['type'] !== 'Event') {
+               $ev['description'] = sprintf('%s, %s', $ev['name'], $ev['description']);
+            }
+
+            //unlike the death events, the birth events do not include in the text information
+            if( $ev['type'] === 'Birth') {
+               $ev['description'] = sprintf('%s, was born', $ev['name'], $ev['description']);
+            }
 
             //set current event
             $event = new Event(); 
