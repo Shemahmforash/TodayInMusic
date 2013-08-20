@@ -29,7 +29,7 @@
 
             //unlike the death events, the birth events do not include in the text information
             if( $ev['type'] === 'Birth') {
-               $ev['description'] = sprintf('%s, %s was born', $ev['name'], $ev['description']);
+               $ev['description'] = sprintf('%s, was born', $ev['description']);
             }
 
             //set current event
