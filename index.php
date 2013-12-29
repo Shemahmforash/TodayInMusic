@@ -17,7 +17,7 @@
 
     //no events for today, get them
     if( !count( $events) ) {
-        $dim = new ThisDayIn\Music( "\HTML_Parser_HTML5" );
+        $dim = new ThisDayIn\Music();
         $evs = $dim->getEvents();
         
         foreach($evs as $ev ) {
