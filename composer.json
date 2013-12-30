@@ -12,10 +12,7 @@
         }
     ],
     "require": {
-        "shemahmforash/thisdayin": "dev-master",
-        "dg/twitter-php": "dev-master",
-        "doctrine/orm": "2.*",
-        "symfony/yaml": "2.*"
+        "dg/twitter-php": "dev-master"
     },
     "autoload": {
         "psr-0": {"": "src/"}

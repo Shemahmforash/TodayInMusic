@@ -32,7 +32,6 @@
         try {
             $tweet->send( $message );
         } catch (TwitterException $e) {
-            //echo 'Error: ' . $e->getMessage();
             $error = $e->getMessage();
         }
 
@@ -57,29 +56,30 @@
         }
     }
 
-function doPut($url, $fields) { 
-    if( !is_array( $fields ) )
-        return false;
+    //send a put request to the service
+    function doPut($url, $fields) { 
+        if( !is_array( $fields ) )
+            return false;
 
-    $fields = json_encode( $fields );
+        $fields = json_encode( $fields );
 
-    if($ch = curl_init($url))  { 
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Length: ' . strlen($fields))); 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('X-HTTP-Method-Override: PUT'));
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields); 
-        curl_exec($ch); 
+        if($ch = curl_init($url))  { 
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); 
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Length: ' . strlen($fields))); 
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('X-HTTP-Method-Override: PUT'));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields); 
+            curl_exec($ch); 
 
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE); 
+            $status = curl_getinfo($ch, CURLINFO_HTTP_CODE); 
 
-        curl_close($ch); 
+            curl_close($ch); 
 
-        return (int) $status; 
-   } 
-   else { 
-      return false; 
-   } 
-} 
+            return (int) $status; 
+    } 
+    else { 
+        return false; 
+    } 
+    } 
 
 ?>
