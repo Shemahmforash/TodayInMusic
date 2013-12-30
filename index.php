@@ -76,10 +76,10 @@
             curl_close($ch); 
 
             return (int) $status; 
-    } 
-    else { 
-        return false; 
-    } 
-    } 
+        } 
+        else { 
+            return false; 
+        } 
+    }
 
 ?>
