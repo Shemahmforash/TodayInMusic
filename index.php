@@ -30,8 +30,7 @@
 
         $error = null;
         try {
-            //$tweet->send( $message );
-
+            $tweet->send( $message );
         } catch (TwitterException $e) {
             //echo 'Error: ' . $e->getMessage();
             $error = $e->getMessage();
@@ -39,7 +38,48 @@
 
         //update event tweeted status in webservice
         if( !$error ) {
-            //TODO: use PUT method
+            $url = $webservice . "event/" . $event['id'];
+
+            $status = doPut($url, array('tweeted' => '1'));
+            if( $status != 200 ) {
+                $error = 'Bar request';
+            }
+        }
+
+        if( $error ) {
+            header('HTTP/1.1 400 Bad Request');
+            return;
+        }
+        else {
+            header('Content-type: application/json');
+
+            echo json_encode(array("status" => "ok", "message" => "Event " . $event['id'] . " tweeted successfully."));
         }
     }
+
+function doPut($url, $fields) { 
+    if( !is_array( $fields ) )
+        return false;
+
+    $fields = json_encode( $fields );
+
+    if($ch = curl_init($url))  { 
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); 
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Length: ' . strlen($fields))); 
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('X-HTTP-Method-Override: PUT'));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields); 
+        curl_exec($ch); 
+
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE); 
+
+        curl_close($ch); 
+
+        return (int) $status; 
+   } 
+   else { 
+      return false; 
+   } 
+} 
+
 ?>
