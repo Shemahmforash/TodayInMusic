@@ -44,7 +44,7 @@
         $error = null;
         try {
             $request = new StatusesUpdateRequest($message);
-            #$send = $tweet->send($request);
+            $send = $tweet->send($request);
         } catch (Exception $e) {
             $error = $e->getMessage();
         }
