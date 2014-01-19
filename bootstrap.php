@@ -10,6 +10,6 @@ $twitter = array(
         'accessTokenSecret' => '',
     );
 
-$webservice = "http://thisdayinmusic.wanderer-red-laptop/";
+$webservice = "http://thisdayinmusic.icdif.com/";
 
 ?>
