@@ -18,9 +18,9 @@
     // Second, instantiate your OAuth access token.
     $token = new OAuth\Token\OAuthToken($twitter['accessToken'], $twitter['accessTokenSecret']);
 
-    $now = new DateTime("now");
-
-    $json = file_get_contents( $webservice . "?tweeted=0&results=all&fields[]=date&fields[]=id&fields[]=description");
+    $now = new DateTime("now", new DateTimeZone("Europe/Lisbon"));
+    
+    $json = file_get_contents( $webservice . "event/?tweeted=0&results=all&fields[]=date&fields[]=id&fields[]=description");
 
     $response = json_decode( $json, true );
 
@@ -35,7 +35,7 @@
         // Third, instantiate your Twitter client.
         $tweet = new Twitter($oauth, $token);
 
-        $date   = new DateTime( $event['date'] );
+        $date   = new DateTime( $event['date'], new DateTimeZone("Europe/Lisbon") );
 
         $message = sprintf('%s - %s', $date->format('Y'), $event['description'] );
         if( strlen( $message ) + strlen( ' #thisdayinmusic' ) < 140 )
